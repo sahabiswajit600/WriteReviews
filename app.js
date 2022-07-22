@@ -38,7 +38,7 @@ app.get('/reviews/new', (req, res) => {
 app.post('/reviews', async (req, res) => {
     const review = new Review(req.body.review);
     await review.save();
-    //res.redirect('/reviews/${review._id}')
+    res.redirect(`/reviews/${review._id}`)
 })
 
 app.get('/reviews/:id', async (req, res) => {
@@ -49,12 +49,18 @@ app.get('/reviews/:id', async (req, res) => {
 app.get('/reviews/:id/edit', async (req, res) => {
     const review = await Review.findById(req.params.id)
     res.render('reviews/edit', { review });
-})
+});
 
 app.put('/reviews/:id', async (req, res) => {
     const { id } = req.params;
     const review = await Review.findByIdAndUpdate(id, {...req.body.review})
-    res.redirect('/reviews/${review._id}')
+    res.redirect(`/reviews/${review._id}`)
+});
+
+app.delete('/reviews/:id', async (req, res) => {
+    const { id } = req.params;
+    await Review.findByIdAndDelete(id);
+    res.redirect('/reviews');
 })
 
 app.listen(3000, () => {

@@ -16,6 +16,11 @@
         <%= review.location %>
     </h2>
     <p><a href="/reviews/<%= review._id %>/edit ">Edit</a></p>
+    <p>
+        <form action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
+            <button>Delete</button>
+        </form>
+    </p>
     <footer>
         <a href="/reviews">All reviews</a>
     </footer>
