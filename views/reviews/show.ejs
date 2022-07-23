@@ -5,6 +5,8 @@
     <h2>
         <%= review.location %>
     </h2>
+    <img src="<%= review.image %> " alt="">
+    <p><%= review.description %> </p>
     <p><a href="/reviews/<%= review._id %>/edit ">Edit</a></p>
     <p>
         <form action="/reviews/<%= review._id %>?_method=DELETE" method="POST">

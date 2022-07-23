@@ -23,7 +23,9 @@ const seedDB = async () => {
         const random1000 = Math.floor(Math.random() * 1000);
         const review = new Review({
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
-            title: `${sample(descriptors)} ${sample(places)}`
+            title: `${sample(descriptors)} ${sample(places)}`,
+            image: 'https://source.unsplash.com/collection/483251',
+            description: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quidem cumque odit reiciendis quo fuga quis architecto modi temporibus accusamus. Neque quaerat dignissimos perspiciatis. Unde est dignissimos esse autem maxime sed.'
         })
         await review.save();
     }
