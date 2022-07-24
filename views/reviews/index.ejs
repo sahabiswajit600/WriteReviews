@@ -3,10 +3,23 @@
 <div>
     <a href="/reviews/new">Add Review</a>
 </div>
-<ul>
-    <% for (let review of reviews) { %>
-        <li><a href="/reviews/<%= review._id %> ">
-                <%= review.title %>
-            </a></li>
-        <% } %>
-</ul>
+
+<% for (let review of reviews) { %>
+    <div class="card mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <img class="img-fluid" alt="" src="<%= review.image %> ">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h5 class="card-title"><%= review.title %></h5>
+                    <p class="card-text"><%= review.description %></p>
+                    <p class="card-text">
+                        <small class="text-muted"><%= review.location %></small>
+                    </p>
+                    <a class="btn btn-primary" href="/reviews/<%= review._id %> ">View <%= review.title %> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
