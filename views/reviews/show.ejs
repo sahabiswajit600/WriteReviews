@@ -1,18 +1,25 @@
 <% layout('layouts/boilerplate') %>
-    <h1>
-        <%= review.title %>
-    </h1>
-    <h2>
-        <%= review.location %>
-    </h2>
-    <img src="<%= review.image %> " alt="">
-    <p><%= review.description %> </p>
-    <p><a href="/reviews/<%= review._id %>/edit ">Edit</a></p>
-    <p>
-        <form action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
-            <button>Delete</button>
-        </form>
-    </p>
-    <footer>
-        <a href="/reviews">All reviews</a>
-    </footer>
+
+<div class="row">
+    <div class="col-6 offset-3">
+        <div class="card mb-3" style="width: 18rem;">
+            <img src="<%= review.image %>" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title"><%= review.title %></h5>
+                <p class="card-text"><%= review.description %></p>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item text-muted"><%= review.location %></li>
+            </ul>
+            <div class="card-body">
+                <a class="card-link btn btn-info" href="/reviews/<%= review._id %>/edit ">Edit</a>
+                <form class="d-inline" action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+            <div class="card-footer text-muted">
+                2 days ago
+            </div>
+        </div>
+    </div>
+</div>
