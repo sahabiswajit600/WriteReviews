@@ -2,24 +2,38 @@
     <div class="row">
         <h1 class="text-center">Edit Review</h1>
         <div class="col-6 offset-3">
-            <form action="/reviews/<%= review._id %>?_method=PUT " method="POST">
+            <form action="/reviews/<%= review._id %>?_method=PUT " method="POST" novalidate class="validated-form">
                 <div class="mb-3">
                     <label class="form-label" for="title">Title</label>
-                    <input class="form-control" type="text" id="title" name="review[title]" value="<%= review.title %>">
+                    <input class="form-control" type="text" id="title" name="review[title]" value="<%= review.title %>"
+                        required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="location">Location</label>
                     <input class="form-control" type="text" id="location" name="review[location]"
-                        value="<%= review.location %>">
+                        value="<%= review.location %>" required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="image">Image Url</label>
-                    <input class="form-control" type="text" id="image" name="review[image]" value="<%= review.image %>">
+                    <input class="form-control" type="text" id="image" name="review[image]" value="<%= review.image %>"
+                        required>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="description">Description</label>
-                    <textarea class="form-control" type="text" id="description"
-                        name="review[description]"><%= review.description %> </textarea>
+                    <textarea class="form-control" type="text" id="description" name="review[description]"
+                        required><%= review.description %> </textarea>
+                    <div class="valid-feedback">
+                        Looks good!
+                    </div>
                 </div>
                 <div class="mb-3">
                     <button class="btn btn-info">Update Review</button>
