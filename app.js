@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const catchAsync = require('./utils/catchAsync');
+const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const Review = require('./models/review');
 
@@ -39,6 +40,7 @@ app.get('/reviews/new', (req, res) => {
 });
 
 app.post('/reviews', catchAsync(async (req, res) => {
+    if(!req.body.review) throw new ExpressError('Invalid Review Data', 400);
     const review = new Review(req.body.review);
     await review.save();
     res.redirect(`/reviews/${review._id}`)
@@ -66,8 +68,14 @@ app.delete('/reviews/:id', catchAsync(async (req, res) => {
     res.redirect('/reviews');
 }));
 
+app.all('*', (req, res, next) => {
+    next(new ExpressError('Page Not Found!', 404));
+});
+
 app.use((err, req, res, next) => {
-    res.send('something went wrong!')
+    const {statusCode = 500, message = 'Something went wrong!'} = err;
+    res.status(statusCode).send(message);
+    res.send('something went wrong!');
 });
 
 app.listen(3000, () => {
