@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const Joi = require('joi');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
@@ -40,7 +41,21 @@ app.get('/reviews/new', (req, res) => {
 });
 
 app.post('/reviews', catchAsync(async (req, res) => {
-    if(!req.body.review) throw new ExpressError('Invalid Review Data', 400);
+    // if(!req.body.review) throw new ExpressError('Invalid Review Data', 400);
+    const reviewSchema = Joi.object({
+        review: Joi.object({
+            title: Joi.string().required(),
+            image: Joi.string().required(),
+            location: Joi.string().required(),
+            description: Joi.string().required()
+        }).required()
+    })
+    const { error } = reviewSchema.validate(req.body);
+    if(error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    }
+    console.log(result);
     const review = new Review(req.body.review);
     await review.save();
     res.redirect(`/reviews/${review._id}`)
