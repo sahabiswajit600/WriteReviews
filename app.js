@@ -7,6 +7,7 @@ const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const Review = require('./models/review');
+const Comment = require('./models/comment');
 
 mongoose.connect('mongodb://localhost:27017/write-review', {
     useNewUrlParser: true,
@@ -76,6 +77,15 @@ app.delete('/reviews/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Review.findByIdAndDelete(id);
     res.redirect('/reviews');
+}));
+
+app.post('/reviews/:id/comments', catchAsync(async(req, res) => {
+    const review = await Review.findById(req.params.id);
+    const comment = new Comment(req.body.comment);
+    review.comments.push(comment);
+    await comment.save();
+    await review.save();
+    res.redirect(`/reviews/${review._id}`);
 }));
 
 app.all('*', (req, res, next) => {
