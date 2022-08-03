@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const { reviewSchema } = require('./schemas.js');
+const { reviewSchema, commentSchema } = require('./schemas.js');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
@@ -31,6 +31,16 @@ app.use(methodOverride('_method'));
 
 const validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
+    if(error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400);
+    } else {
+        next();
+    }
+};
+
+const validateComment = (req, res, next) => {
+    const { error } = commentSchema.validate(req.body);
     if(error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
@@ -79,7 +89,7 @@ app.delete('/reviews/:id', catchAsync(async (req, res) => {
     res.redirect('/reviews');
 }));
 
-app.post('/reviews/:id/comments', catchAsync(async(req, res) => {
+app.post('/reviews/:id/comments', validateComment, catchAsync(async(req, res) => {
     const review = await Review.findById(req.params.id);
     const comment = new Comment(req.body.comment);
     review.comments.push(comment);
