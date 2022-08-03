@@ -68,7 +68,7 @@ app.post('/reviews', validateReview, catchAsync(async (req, res) => {
 }));
 
 app.get('/reviews/:id', catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id)
+    const review = await Review.findById(req.params.id).populate('comments');
     res.render('reviews/show', { review });
 }));
 
