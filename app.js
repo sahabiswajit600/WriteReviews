@@ -2,14 +2,11 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const { reviewSchema, commentSchema } = require('./schemas.js');
-const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
-const Review = require('./models/review');
-const Comment = require('./models/comment');
 
 const reviews = require('./routes/reviews');
+const comments = require('./routes/comments');
 
 mongoose.connect('mongodb://localhost:27017/write-review', {
     useNewUrlParser: true,
@@ -32,37 +29,12 @@ app.use(express.urlencoded({ extended: true}));
 app.use(methodOverride('_method'));
 
 
-const validateComment = (req, res, next) => {
-    const { error } = commentSchema.validate(req.body);
-    if(error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
-
 app.use('/reviews', reviews);
+app.use('/reviews/:id/comments', comments);
 
 app.get('/', (req, res) => {
-    res.render('home')
+    res.render('home');
 });
-
-app.post('/reviews/:id/comments', validateComment, catchAsync(async(req, res) => {
-    const review = await Review.findById(req.params.id);
-    const comment = new Comment(req.body.comment);
-    review.comments.push(comment);
-    await comment.save();
-    await review.save();
-    res.redirect(`/reviews/${review._id}`);
-}));
-
-app.delete('/reviews/:id/comments/:commentId', catchAsync(async (req, res) => {
-    const { id, commentId } = req.params;
-    await Review.findByIdAndUpdate(id, {$pull: {comments: commentId}});
-    await Comment.findByIdAndDelete(commentId);
-    res.redirect(`/reviews/${id}`);
-}));
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found!', 404));
