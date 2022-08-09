@@ -34,11 +34,19 @@ router.post('/', validateReview, catchAsync(async (req, res) => {
 
 router.get('/:id', catchAsync(async (req, res) => {
     const review = await Review.findById(req.params.id).populate('comments');
+    if(!review) {
+        req.flash('error', 'Cannot find that review!');
+        return res.redirect('/reviews');
+    }
     res.render('reviews/show', { review });
 }));
 
 router.get('/:id/edit', catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id)
+    const review = await Review.findById(req.params.id);
+    if(!review) {
+        req.flash('error', 'Cannot find that review!');
+        return res.redirect('/reviews');
+    }
     res.render('reviews/edit', { review });
 }));
 
