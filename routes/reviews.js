@@ -28,6 +28,7 @@ router.get('/new', (req, res) => {
 router.post('/', validateReview, catchAsync(async (req, res) => {
     const review = new Review(req.body.review);
     await review.save();
+    req.flash('success', 'Successfully made a new review!');
     res.redirect(`/reviews/${review._id}`)
 }));
 
