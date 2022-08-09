@@ -45,12 +45,14 @@ router.get('/:id/edit', catchAsync(async (req, res) => {
 router.put('/:id', validateReview, catchAsync(async (req, res) => {
     const { id } = req.params;
     const review = await Review.findByIdAndUpdate(id, {...req.body.review})
+    req.flash('success', 'Successfully updated review!');
     res.redirect(`/reviews/${review._id}`)
 }));
 
 router.delete('/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     await Review.findByIdAndDelete(id);
+    req.flash('success', 'Successfully deleted review!');
     res.redirect('/reviews');
 }));
 
