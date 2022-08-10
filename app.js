@@ -10,8 +10,9 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
-const reviews = require('./routes/reviews');
-const comments = require('./routes/comments');
+const userRoutes = require('./routes/users');
+const reviewRoutes = require('./routes/reviews');
+const commentRoutes = require('./routes/comments');
 
 mongoose.connect('mongodb://localhost:27017/write-review', {
     useNewUrlParser: true,
@@ -61,14 +62,9 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get('/fakeUser', async (req, res) => {
-    const user = new User({email: 'biswajit@gmail.com', username: 'Biswajit'});
-    const newUser = await User.register(user, 'monkey');
-    res.send(newUser);
-});
-
-app.use('/reviews', reviews);
-app.use('/reviews/:id/comments', comments);
+app.use('/', userRoutes);
+app.use('/reviews', reviewRoutes);
+app.use('/reviews/:id/comments', commentRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
