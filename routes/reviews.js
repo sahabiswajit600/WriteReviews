@@ -1,21 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { reviewSchema } = require('../schemas.js');
-const { isLoggedIn } = require('../middleware');
+const { isLoggedIn, isAuthor, validateReview } = require('../middleware');
 
-const ExpressError = require('../utils/ExpressError');
 const Review = require('../models/review');
-
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body);
-    if(error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400);
-    } else {
-        next();
-    }
-};
 
 router.get('/', catchAsync(async (req, res) => {
     const reviews = await Review.find({});
@@ -43,33 +31,24 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('reviews/show', { review });
 }));
 
-router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params;
     const review = await Review.findById(id);
     if(!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');
     }
-    if(!review.author.equals(req.user.id)) {
-        req.flash('error', 'You do not have permission to do that!');
-        return res.redirect(`/reviews/${id}`);
-    }
     res.render('reviews/edit', { review });
 }));
 
-router.put('/:id', isLoggedIn, validateReview, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, isAuthor, validateReview, catchAsync(async (req, res) => {
     const { id } = req.params;
-    const review = await Review.findById(id);
-    if(!review.author.equals(req.user.id)) {
-        req.flash('error', 'You do not have permission to do that!');
-        return res.redirect(`/reviews/${id}`);
-    }
-    const findReview = await Review.findByIdAndUpdate(id, {...req.body.review})
+    const review = await Review.findByIdAndUpdate(id, {...req.body.review})
     req.flash('success', 'Successfully updated review!');
     res.redirect(`/reviews/${review._id}`);
 }));
 
-router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
     const { id } = req.params;
     await Review.findByIdAndDelete(id);
     req.flash('success', 'Successfully deleted review!');
