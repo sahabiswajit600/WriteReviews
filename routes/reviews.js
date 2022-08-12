@@ -44,19 +44,29 @@ router.get('/:id', catchAsync(async (req, res) => {
 }));
 
 router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id);
+    const { id } = req.params;
+    const review = await Review.findById(id);
     if(!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');
+    }
+    if(!review.author.equals(req.user.id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/reviews/${id}`);
     }
     res.render('reviews/edit', { review });
 }));
 
 router.put('/:id', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     const { id } = req.params;
-    const review = await Review.findByIdAndUpdate(id, {...req.body.review})
+    const review = await Review.findById(id);
+    if(!review.author.equals(req.user.id)) {
+        req.flash('error', 'You do not have permission to do that!');
+        return res.redirect(`/reviews/${id}`);
+    }
+    const findReview = await Review.findByIdAndUpdate(id, {...req.body.review})
     req.flash('success', 'Successfully updated review!');
-    res.redirect(`/reviews/${review._id}`)
+    res.redirect(`/reviews/${review._id}`);
 }));
 
 router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
