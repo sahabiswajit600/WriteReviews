@@ -7,6 +7,10 @@ const ReviewSchema = new Schema({
     image: String,
     description: String,
     location: String,
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
     comments: [
         {
             type: Schema.Types.ObjectId,

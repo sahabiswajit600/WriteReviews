@@ -28,13 +28,14 @@ router.get('/new', isLoggedIn, (req, res) => {
 
 router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
     const review = new Review(req.body.review);
+    review.author = req.user._id;
     await review.save();
     req.flash('success', 'Successfully made a new review!');
     res.redirect(`/reviews/${review._id}`)
 }));
 
 router.get('/:id', catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id).populate('comments');
+    const review = await Review.findById(req.params.id).populate('comments').populate('author');
     if(!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');
