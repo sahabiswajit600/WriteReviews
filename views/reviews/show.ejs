@@ -16,19 +16,21 @@
                     <li class="list-group-item text-muted">
                         <%= review.location %>
                     </li>
-                    <li class="list-group-item">Submitted by 
+                    <li class="list-group-item">Submitted by
                         <%= review.author.username %>
                     </li>
                 </ul>
-                <div class="card-body">
-                    <a class="card-link btn btn-info" href="/reviews/<%= review._id %>/edit ">Edit</a>
-                    <form class="d-inline" action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
-                        <button class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
-                <div class="card-footer text-muted">
-                    2 days ago
-                </div>
+                <% if(currentUser && review.author.equals(currentUser._id)) { %>
+                    <div class="card-body">
+                        <a class="card-link btn btn-info" href="/reviews/<%= review._id %>/edit ">Edit</a>
+                        <form class="d-inline" action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                    <% } %>
+                        <div class="card-footer text-muted">
+                            2 days ago
+                        </div>
             </div>
         </div>
         <div class="col-6">
@@ -40,7 +42,8 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="body">Comment</label>
-                    <textarea class="form-control" name="comment[body]" id="body" cols="30" rows="3" required></textarea>
+                    <textarea class="form-control" name="comment[body]" id="body" cols="30" rows="3"
+                        required></textarea>
                     <div class="valid-feedback">
                         Looks good!
                     </div>
@@ -54,7 +57,8 @@
                         </h5>
                         <p class="card-text">Comment: <%= comment.body %>
                         </p>
-                        <form action="/reviews/<%= review._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                        <form action="/reviews/<%= review._id %>/comments/<%= comment._id %>?_method=DELETE"
+                            method="POST">
                             <button class="btn btn-sm btn-danger">Delete</button>
                         </form>
                     </div>
