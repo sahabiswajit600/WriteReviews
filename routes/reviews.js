@@ -23,7 +23,13 @@ router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
 }));
 
 router.get('/:id', catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id).populate('comments').populate('author');
+    const review = await Review.findById(req.params.id).populate({
+        path: 'comments',
+        populate: {
+            path: 'author'
+        }
+    }).populate('author');
+    //console.log(review);
     if(!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');

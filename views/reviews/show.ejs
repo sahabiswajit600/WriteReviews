@@ -57,12 +57,16 @@
                             <div class="card-body">
                                 <h5 class="card-title">Rating: <%= comment.rating %>
                                 </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">By <%= comment.author.username %>
+                                </h6>
                                 <p class="card-text">Comment: <%= comment.body %>
                                 </p>
-                                <form action="/reviews/<%= review._id %>/comments/<%= comment._id %>?_method=DELETE"
-                                    method="POST">
-                                    <button class="btn btn-sm btn-danger">Delete</button>
-                                </form>
+                                <% if(currentUser && comment.author.equals(currentUser._id)) { %>
+                                    <form action="/reviews/<%= review._id %>/comments/<%= comment._id %>?_method=DELETE"
+                                        method="POST">
+                                        <button class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                    <% } %>
                             </div>
                         </div>
                         <% } %>
