@@ -4,7 +4,8 @@ const reviews = require('../controllers/reviews');
 const catchAsync = require('../utils/catchAsync');
 const { isLoggedIn, isAuthor, validateReview } = require('../middleware');
 const multer  = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const { storage } = require('../cloudinary');
+const upload = multer({ storage });
 
 const Review = require('../models/review');
 
