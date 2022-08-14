@@ -3,12 +3,18 @@ const router = express.Router();
 const reviews = require('../controllers/reviews');
 const catchAsync = require('../utils/catchAsync');
 const { isLoggedIn, isAuthor, validateReview } = require('../middleware');
+const multer  = require('multer');
+const upload = multer({ dest: 'uploads/' });
 
 const Review = require('../models/review');
 
 router.route('/')
     .get(catchAsync(reviews.index))
-    .post(isLoggedIn, validateReview, catchAsync(reviews.createReview));
+    //.post(isLoggedIn, validateReview, catchAsync(reviews.createReview));
+    .post(upload.array('image'), (req, res) => {
+        console.log(req.body, req.files)
+        res.send('it worked')
+    })
 
 router.get('/new', isLoggedIn, reviews.renderNewForm);
 
