@@ -1,64 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const reviews = require('../controllers/reviews');
 const catchAsync = require('../utils/catchAsync');
 const { isLoggedIn, isAuthor, validateReview } = require('../middleware');
 
 const Review = require('../models/review');
 
-router.get('/', catchAsync(async (req, res) => {
-    const reviews = await Review.find({});
-    res.render('reviews/index', { reviews })
-}));
+router.get('/', catchAsync(reviews.index));
 
-router.get('/new', isLoggedIn, (req, res) => {
-    res.render('reviews/new');
-});
+router.get('/new', isLoggedIn, reviews.renderNewForm);
 
-router.post('/', isLoggedIn, validateReview, catchAsync(async (req, res) => {
-    const review = new Review(req.body.review);
-    review.author = req.user._id;
-    await review.save();
-    req.flash('success', 'Successfully made a new review!');
-    res.redirect(`/reviews/${review._id}`)
-}));
+router.post('/', isLoggedIn, validateReview, catchAsync(reviews.createReview));
 
-router.get('/:id', catchAsync(async (req, res) => {
-    const review = await Review.findById(req.params.id).populate({
-        path: 'comments',
-        populate: {
-            path: 'author'
-        }
-    }).populate('author');
-    //console.log(review);
-    if(!review) {
-        req.flash('error', 'Cannot find that review!');
-        return res.redirect('/reviews');
-    }
-    res.render('reviews/show', { review });
-}));
+router.get('/:id', catchAsync(reviews.showReview));
 
-router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const review = await Review.findById(id);
-    if(!review) {
-        req.flash('error', 'Cannot find that review!');
-        return res.redirect('/reviews');
-    }
-    res.render('reviews/edit', { review });
-}));
+router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(reviews.renderEditForm));
 
-router.put('/:id', isLoggedIn, isAuthor, validateReview, catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const review = await Review.findByIdAndUpdate(id, {...req.body.review})
-    req.flash('success', 'Successfully updated review!');
-    res.redirect(`/reviews/${review._id}`);
-}));
+router.put('/:id', isLoggedIn, isAuthor, validateReview, catchAsync(reviews.updateReview));
 
-router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
-    const { id } = req.params;
-    await Review.findByIdAndDelete(id);
-    req.flash('success', 'Successfully deleted review!');
-    res.redirect('/reviews');
-}));
+router.delete('/:id', isLoggedIn, isAuthor, catchAsync(reviews.deleteReview));
 
 module.exports = router;
