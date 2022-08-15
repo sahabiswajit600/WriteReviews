@@ -17,7 +17,7 @@ router.get('/new', isLoggedIn, reviews.renderNewForm);
 
 router.route('/:id')
     .get(catchAsync(reviews.showReview))
-    .put(isLoggedIn, isAuthor, validateReview, catchAsync(reviews.updateReview))
+    .put(isLoggedIn, isAuthor, upload.array('image'), validateReview, catchAsync(reviews.updateReview))
     .delete(isLoggedIn, isAuthor, catchAsync(reviews.deleteReview));
 
 router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(reviews.renderEditForm));
