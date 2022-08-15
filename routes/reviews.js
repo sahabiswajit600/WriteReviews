@@ -11,11 +11,7 @@ const Review = require('../models/review');
 
 router.route('/')
     .get(catchAsync(reviews.index))
-    //.post(isLoggedIn, validateReview, catchAsync(reviews.createReview));
-    .post(upload.array('image'), (req, res) => {
-        console.log(req.body, req.files)
-        res.send('it worked')
-    })
+    .post(isLoggedIn, upload.array('image'), validateReview, catchAsync(reviews.createReview));
 
 router.get('/new', isLoggedIn, reviews.renderNewForm);
 

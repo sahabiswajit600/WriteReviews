@@ -3,35 +3,37 @@
 
     <div class="row">
         <div class="col-6">
-            <div class="card mb-3" style="width: 24rem;">
-                <img src="<%= review.image %>" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <%= review.title %>
-                    </h5>
-                    <p class="card-text">
-                        <%= review.description %>
-                    </p>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item text-muted">
-                        <%= review.location %>
-                    </li>
-                    <li class="list-group-item">Submitted by
-                        <%= review.author.username %>
-                    </li>
-                </ul>
-                <% if(currentUser && review.author.equals(currentUser._id)) { %>
-                    <div class="card-body">
-                        <a class="card-link btn btn-info" href="/reviews/<%= review._id %>/edit ">Edit</a>
-                        <form class="d-inline" action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
-                            <button class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
+            <div class="card mb-3">
+                <% for(let img of review.images) { %>
+                    <img src="<%= img.url %>" class="card-img-top" alt="...">
                     <% } %>
-                        <div class="card-footer text-muted">
-                            2 days ago
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= review.title %>
+                            </h5>
+                            <p class="card-text">
+                                <%= review.description %>
+                            </p>
                         </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item text-muted">
+                                <%= review.location %>
+                            </li>
+                            <li class="list-group-item">Submitted by
+                                <%= review.author.username %>
+                            </li>
+                        </ul>
+                        <% if(currentUser && review.author.equals(currentUser._id)) { %>
+                            <div class="card-body">
+                                <a class="card-link btn btn-info" href="/reviews/<%= review._id %>/edit ">Edit</a>
+                                <form class="d-inline" action="/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                            <% } %>
+                                <div class="card-footer text-muted">
+                                    2 days ago
+                                </div>
             </div>
         </div>
         <div class="col-6">
