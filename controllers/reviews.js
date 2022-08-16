@@ -1,4 +1,5 @@
 const Review = require('../models/review');
+const { cloudinary } =require('../cloudinary');
 
 module.exports.index = async (req, res) => {
     const reviews = await Review.find({});
@@ -45,10 +46,17 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateReview = async (req, res) => {
     const { id } = req.params;
+    console.log(req.body)
     const review = await Review.findByIdAndUpdate(id, {...req.body.review})
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     review.images.push(...imgs);
     await review.save();
+    if(req.body.deleteImages) {
+        for(let filename of req.body.deleteImages) {
+            await cloudinary.uploader.destroy(filename);
+        }
+        await review.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });
+    }
     req.flash('success', 'Successfully updated review!');
     res.redirect(`/reviews/${review._id}`);
 };
