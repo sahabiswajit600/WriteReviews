@@ -1,4 +1,7 @@
 const Review = require('../models/review');
+const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
+const mapBoxToken = process.env.MAPBOX_TOKEN;
+const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
 const { cloudinary } =require('../cloudinary');
 
 module.exports.index = async (req, res) => {
@@ -11,13 +14,18 @@ module.exports.renderNewForm = (req, res) => {
 };
 
 module.exports.createReview = async (req, res) => {
-    const review = new Review(req.body.review);
-    review.images = req.files.map(f => ({url: f.path, filename: f.filename}));
-    review.author = req.user._id;
-    await review.save();
-    console.log(review);
-    req.flash('success', 'Successfully made a new review!');
-    res.redirect(`/reviews/${review._id}`);
+    const geoData = await geocoder.forwardGeocode({
+        query: req.body.review.location,
+        limit: 1
+    }).send();
+    res.send(geoData.body.features[0].geometry.coordinates)
+    // const review = new Review(req.body.review);
+    // review.images = req.files.map(f => ({url: f.path, filename: f.filename}));
+    // review.author = req.user._id;
+    // await review.save();
+    // console.log(review);
+    // req.flash('success', 'Successfully made a new review!');
+    // res.redirect(`/reviews/${review._id}`);
 };
 
 module.exports.showReview = async (req, res) => {
