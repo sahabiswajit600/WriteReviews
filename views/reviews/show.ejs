@@ -113,6 +113,8 @@
 
     <script>
         const mapToken = '<%- process.env.MAPBOX_TOKEN %>';
+        const reviewTitle = '<%- review.title %>';
+        const reviewLocation = '<%- review.location %>';
         const reviewGeometry = <%- review.geometry %>
     </script>
     <script src="/javascripts/showPageMap.js"></script>
