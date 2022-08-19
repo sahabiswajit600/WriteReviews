@@ -7,10 +7,11 @@ const ImageSchema = new Schema({
     filename: String
 });
 
-ImageSchema.virtual('thumbnail').get(function() {
+ImageSchema.virtual('thumbnail').get(function () {
     return this.url.replace('/upload', '/upload/w_200');
 });
 
+const opts = { toJSON: { virtuals: true } };
 const ReviewSchema = new Schema({
     title: String,
     images: [ImageSchema],
@@ -37,10 +38,16 @@ const ReviewSchema = new Schema({
             ref: 'Comment'
         }
     ]
+}, opts);
+
+ReviewSchema.virtual('properties.popUpMarkup').get(function () {
+    return `
+        <strong><a href="/reviews/${this._id}">${this.title}</a></strong>
+        <p>${this.description.substring(0, 20)}...</p>`;
 });
 
-ReviewSchema.post('findOneAndDelete', async function(doc) {
-    if(doc) {
+ReviewSchema.post('findOneAndDelete', async function (doc) {
+    if (doc) {
         await Comment.deleteMany({
             _id: {
                 $in: doc.comments
