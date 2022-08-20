@@ -14,8 +14,7 @@ db.once("open", () => {
     console.log("Database connected");
 });
 
-const sample = array => array[Math.floor(Math.random() * array.length)]
-
+const sample = array => array[Math.floor(Math.random() * array.length)];
 
 const seedDB = async () => {
     await Review.deleteMany({});
@@ -25,12 +24,12 @@ const seedDB = async () => {
             author: '62f5c49033c4dabb1b70b5aa',
             location: `${cities[random1000].city}, ${cities[random1000].state}`,
             title: `${sample(descriptors)} ${sample(places)}`,
-            geometry: { 
+            geometry: {
                 type: "Point",
                 coordinates: [
                     cities[random1000].longitude,
                     cities[random1000].latitude
-            ] 
+                ]
             },
             images: [
                 {
@@ -50,4 +49,4 @@ const seedDB = async () => {
 
 seedDB().then(() => {
     mongoose.connection.close();
-})
+});

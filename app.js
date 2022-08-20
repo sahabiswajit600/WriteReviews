@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
 console.log(process.env.CLOUDINARY_CLOUD_NAME)
@@ -36,7 +36,7 @@ app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -46,8 +46,8 @@ const sessionConfig = {
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        expires: Date.now() + 1000*60*60*24*7,
-        maxAge: 1000*60*60*24*7
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 };
 
@@ -81,8 +81,8 @@ app.all('*', (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    const {statusCode = 500} = err;
-    if(!err.message) err.message = 'Something Went Wrong!';
+    const { statusCode = 500 } = err;
+    if (!err.message) err.message = 'Something Went Wrong!';
     res.status(statusCode).render('error', { err });
 });
 

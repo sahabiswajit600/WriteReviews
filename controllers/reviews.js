@@ -2,7 +2,7 @@ const Review = require('../models/review');
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
 const mapBoxToken = process.env.MAPBOX_TOKEN;
 const geocoder = mbxGeocoding({ accessToken: mapBoxToken });
-const { cloudinary } =require('../cloudinary');
+const { cloudinary } = require('../cloudinary');
 
 module.exports.index = async (req, res) => {
     const reviews = await Review.find({});
@@ -20,7 +20,7 @@ module.exports.createReview = async (req, res) => {
     }).send();
     const review = new Review(req.body.review);
     review.geometry = geoData.body.features[0].geometry;
-    review.images = req.files.map(f => ({url: f.path, filename: f.filename}));
+    review.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     review.author = req.user._id;
     await review.save();
     console.log(review);
@@ -35,7 +35,7 @@ module.exports.showReview = async (req, res) => {
             path: 'author'
         }
     }).populate('author');
-    if(!review) {
+    if (!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');
     }
@@ -45,7 +45,7 @@ module.exports.showReview = async (req, res) => {
 module.exports.renderEditForm = async (req, res) => {
     const { id } = req.params;
     const review = await Review.findById(id);
-    if(!review) {
+    if (!review) {
         req.flash('error', 'Cannot find that review!');
         return res.redirect('/reviews');
     }
@@ -55,12 +55,12 @@ module.exports.renderEditForm = async (req, res) => {
 module.exports.updateReview = async (req, res) => {
     const { id } = req.params;
     console.log(req.body)
-    const review = await Review.findByIdAndUpdate(id, {...req.body.review})
+    const review = await Review.findByIdAndUpdate(id, { ...req.body.review })
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     review.images.push(...imgs);
     await review.save();
-    if(req.body.deleteImages) {
-        for(let filename of req.body.deleteImages) {
+    if (req.body.deleteImages) {
+        for (let filename of req.body.deleteImages) {
             await cloudinary.uploader.destroy(filename);
         }
         await review.updateOne({ $pull: { images: { filename: { $in: req.body.deleteImages } } } });

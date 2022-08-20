@@ -3,7 +3,7 @@ const router = express.Router();
 const reviews = require('../controllers/reviews');
 const catchAsync = require('../utils/catchAsync');
 const { isLoggedIn, isAuthor, validateReview } = require('../middleware');
-const multer  = require('multer');
+const multer = require('multer');
 const { storage } = require('../cloudinary');
 const upload = multer({ storage });
 

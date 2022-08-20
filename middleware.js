@@ -4,7 +4,7 @@ const Review = require('./models/review');
 const Comment = require('./models/comment');
 
 module.exports.isLoggedIn = (req, res, next) => {
-    if(!req.isAuthenticated()) {
+    if (!req.isAuthenticated()) {
         req.session.returnTo = req.originalUrl;
         req.flash('error', 'You must be signed in');
         return res.redirect('/login');
@@ -14,7 +14,7 @@ module.exports.isLoggedIn = (req, res, next) => {
 
 module.exports.validateReview = (req, res, next) => {
     const { error } = reviewSchema.validate(req.body);
-    if(error) {
+    if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
     } else {
@@ -25,7 +25,7 @@ module.exports.validateReview = (req, res, next) => {
 module.exports.isAuthor = async (req, res, next) => {
     const { id } = req.params;
     const review = await Review.findById(id);
-    if(!review.author.equals(req.user.id)) {
+    if (!review.author.equals(req.user.id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/reviews/${id}`);
     }
@@ -35,7 +35,7 @@ module.exports.isAuthor = async (req, res, next) => {
 module.exports.isCommentAuthor = async (req, res, next) => {
     const { id, commentId } = req.params;
     const comment = await Comment.findById(commentId);
-    if(!comment.author.equals(req.user.id)) {
+    if (!comment.author.equals(req.user.id)) {
         req.flash('error', 'You do not have permission to do that!');
         return res.redirect(`/reviews/${id}`);
     }
@@ -44,7 +44,7 @@ module.exports.isCommentAuthor = async (req, res, next) => {
 
 module.exports.validateComment = (req, res, next) => {
     const { error } = commentSchema.validate(req.body);
-    if(error) {
+    if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400);
     } else {
