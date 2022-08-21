@@ -54,8 +54,7 @@ module.exports.renderEditForm = async (req, res) => {
 
 module.exports.updateReview = async (req, res) => {
     const { id } = req.params;
-    console.log(req.body)
-    const review = await Review.findByIdAndUpdate(id, { ...req.body.review })
+    const review = await Review.findByIdAndUpdate(id, { ...req.body.review });
     const imgs = req.files.map(f => ({ url: f.path, filename: f.filename }));
     review.images.push(...imgs);
     await review.save();
