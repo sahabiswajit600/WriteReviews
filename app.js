@@ -14,14 +14,16 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const helmet = require('helmet');
-
 const mongoSanitize = require('express-mongo-sanitize');
+const MongoStore = require('connect-mongo');
 
 const userRoutes = require('./routes/users');
 const reviewRoutes = require('./routes/reviews');
 const commentRoutes = require('./routes/comments');
 
-mongoose.connect('mongodb://localhost:27017/write-review', {
+// const dbUrl = process.env.DB_URL;
+const dbUrl = 'mongodb://localhost:27017/write-review';
+mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -46,7 +48,18 @@ app.use(mongoSanitize({
 }),
 );
 
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    secret: 'thisshouldbeabettersecret',
+    touchAfter: 24 * 60 * 60
+});
+
+store.on("error", function (err) {
+    console.log("SESSION STORE ERROR!", err);
+});
+
 const sessionConfig = {
+    store,
     name: 'session',
     secret: 'thisshouldbeabettersecret',
     resave: false,
